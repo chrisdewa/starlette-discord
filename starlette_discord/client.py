@@ -1,5 +1,6 @@
 import aiohttp
 import oauthlib
+import socket
 
 from starlette.responses import RedirectResponse
 
@@ -10,7 +11,9 @@ BASE_URL = 'https://discord.com'
 class DiscordOauthClient:
     """Client for Discord Oauth2."""
     def __init__(self, client_id, client_secret, redirect_uri):
-        self.session = aiohttp.ClientSession()
+        timeout = aiohttp.ClientTimeout(2)
+        connector = aiohttp.TCPConnector(family=socket.AF_INET, limit_per_host=100)
+        self.session = aiohttp.ClientSession(timeout=timeout, connector=connector)
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
